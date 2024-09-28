@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { Redirect, router } from 'expo-router';
 
 export default function HomeScreen() {
   return (
@@ -46,7 +47,15 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/signin")}>
+      <ThemedText type="title">Sign In</ThemedText>
+    </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/signup")}>
+      <ThemedText type="title">Sign Up</ThemedText>
+    </TouchableOpacity>
     </ParallaxScrollView>
+
+    
   );
 }
 
@@ -67,4 +76,13 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
   },
+  button:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'green',
+  }
 });
