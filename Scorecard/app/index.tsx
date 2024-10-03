@@ -48,10 +48,10 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
       <TouchableOpacity style={styles.button} onPress={() => router.push("/signin")}>
-      <ThemedText type="title">Sign In</ThemedText>
+      <ThemedText style={styles.buttonText} type="title">Sign In</ThemedText>
     </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => router.push("/signup")}>
-      <ThemedText type="title">Sign Up</ThemedText>
+      <ThemedText style={styles.buttonText} type="title">Sign Up</ThemedText>
     </TouchableOpacity>
     </ParallaxScrollView>
 
@@ -84,5 +84,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 3,
     backgroundColor: 'green',
+    margin: 12,
+    color: 'white'
+  },
+  buttonText:{
+    color: 'white'
   }
 });
