@@ -1,5 +1,5 @@
 import SignIn from '@/app/(auth)/signin';
-import {Account, Client, Databases, ID } from 'react-native-appwrite';
+import {Account, Client, Databases, ID, Avatars } from 'react-native-appwrite';
 
 export const config = {
     endpoint: 'https://cloud.appwrite.io/v1',
@@ -21,6 +21,7 @@ client
 
 const account = new Account(client);
 const databases = new Databases(client);
+const avatars = new Avatars(client);
 
 export const createUser = async (email, password, username) => {
     try {
@@ -28,15 +29,17 @@ export const createUser = async (email, password, username) => {
 
         if(!newAccount) throw Error;
 
-        const avatarURL = 'https://media.istockphoto.com/id/1004838584/vector/golf-hole-icon-on-the-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=LVjEiMhTcQ4vR5tfUj6IW2K1qEOwajt_q4DDVc60Y7Q=';
-        
+        const avatarUrl = avatars.getImage('https://media.istockphoto.com/id/1004838584/vector/golf-hole-icon-on-the-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=LVjEiMhTcQ4vR5tfUj6IW2K1qEOwajt_q4DDVc60Y7Q=');
+
+
+
         await signIn(email, password);
 
         const newUser = await databases.createDocument(
             config.databaseID, 
             config.userCollectionID, 
             ID.unique(),
-            {accountID: newAccount.$id, email, username, avatarURL}
+            {accountid: newAccount.$id, email: email, username: username, avatar: avatarUrl}
         );
         return newUser
     } catch (error) {
