@@ -1,23 +1,46 @@
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity} from 'react-native'
-import React from 'react'
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native'
+import React, { useState } from 'react'
 import { Link, router } from "expo-router";
 import { ThemedText } from '@/components/ThemedText';
+import { signIn } from '@/lib/appwrite';
 
 
 const SignIn = () => {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+  const onClick = async () => {
+    if (form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all fields");
+    }
+    else {
+      try {
+        await signIn(form.email, form.password);
+        router.replace("/home");
+
+      } catch (error) {
+        if (error instanceof Error) Alert.alert("Error", error.message);
+      }
+    }
+  }
   return (
     <SafeAreaView>
       <TextInput
         style={styles.input}
         placeholder="Email"
         keyboardType="numeric"
+        value = {form.email}
+        onChangeText={(value) => setForm({ ...form, email: value })}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         keyboardType="numeric"
+        value = {form.password}
+        onChangeText={(value) => setForm({ ...form, password: value })}
       />
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/explore")}>
+      <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
       <ThemedText style={styles.buttonText} type="title">Sign In</ThemedText>
       </TouchableOpacity>
     </SafeAreaView>
