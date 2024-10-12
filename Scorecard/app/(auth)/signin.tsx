@@ -2,7 +2,8 @@ import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Aler
 import React, { useState } from 'react'
 import { Link, router } from "expo-router";
 import { ThemedText } from '@/components/ThemedText';
-import { signIn } from '@/lib/appwrite';
+import { getCurrentUser, signIn } from '@/lib/appwrite';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 
 const SignIn = () => {
@@ -10,6 +11,9 @@ const SignIn = () => {
     email: "",
     password: "",
   });
+
+  const {user, setUser, setIsLoggedIn} = useGlobalContext();
+
   const onClick = async () => {
     if (form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
@@ -17,6 +21,9 @@ const SignIn = () => {
     else {
       try {
         await signIn(form.email, form.password);
+        const result = await getCurrentUser();
+        setUser(result);
+        setIsLoggedIn(true);
         router.replace("/home");
 
       } catch (error) {
@@ -24,6 +31,7 @@ const SignIn = () => {
       }
     }
   }
+
   return (
     <SafeAreaView>
       <TextInput
