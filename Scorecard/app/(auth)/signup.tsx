@@ -4,6 +4,7 @@ import { Link, router } from "expo-router";
 import { ThemedText } from '@/components/ThemedText';
 import {createUser} from '../../lib/appwrite';
 import { useState } from "react";
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 
 const SignUp = () => {
@@ -12,6 +13,8 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+  
+  const {user, setUser, setIsLoggedIn} = useGlobalContext();
 
   const onClick = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
@@ -19,7 +22,9 @@ const SignUp = () => {
     }
     else {
       try {
-        createUser(form.email, form.password, form.username);
+        const result = await createUser(form.email, form.password, form.username);
+        setUser(result);
+        setIsLoggedIn(true);
         router.replace("/home");
 
       } catch (error) {
