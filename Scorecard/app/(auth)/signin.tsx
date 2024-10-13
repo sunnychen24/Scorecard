@@ -37,14 +37,14 @@ const SignIn = () => {
       <TextInput
         style={styles.input}
         placeholder="Email"
-        keyboardType="numeric"
+        keyboardType="email-address"
         value = {form.email}
         onChangeText={(value) => setForm({ ...form, email: value })}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        keyboardType="numeric"
+        keyboardType="default"
         value = {form.password}
         onChangeText={(value) => setForm({ ...form, password: value })}
       />

@@ -72,6 +72,16 @@ export const getCurrentUser = async () => {
     }
 }
 
+export const getAllUsers = async () => {
+    try {
+        const users = await databases.listDocuments(config.databaseID, config.userCollectionID);
+        return users.documents;
+        
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 export const signOut = async () => {
     try {
         const session = await account.deleteSession('current');

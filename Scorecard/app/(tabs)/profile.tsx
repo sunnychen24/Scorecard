@@ -32,8 +32,16 @@ export default function ProfileScreen() {
         <ThemedText type="title">Hello, {user?.username}</ThemedText>
         <Image source={{uri: user?.avatar}} />
       </ThemedView>
+      <ThemedView style={styles.titleContainer}>
+        <TouchableOpacity onPress={() => {}}>
+          <ThemedText type="subtitle">Followers</ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          <ThemedText type="subtitle">Following</ThemedText>
+        </TouchableOpacity>
+      </ThemedView>
       <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
-      <ThemedText style={styles.buttonText} type="title">Sign Out</ThemedText>
+        <ThemedText style={styles.buttonText} type="title">Sign Out</ThemedText>
       </TouchableOpacity>
     </ParallaxScrollView>
   );
@@ -43,7 +51,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 38,
   },
   stepContainer: {
     gap: 8,
