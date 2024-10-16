@@ -7,16 +7,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { Account } from 'react-native-appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
-import { signOut } from '@/lib/appwrite';
+import { follow, signOut } from '@/lib/appwrite';
+import { useLocalSearchParams } from "expo-router";
 
-export default function ProfileScreen() {
-  const {user, setUser, setIsLoggedIn} = useGlobalContext();
+export default function ViewProfile() {
+const { userid } = useLocalSearchParams();
 
   const onClick = async () => {
-    await signOut();
-    setUser(null);
-    setIsLoggedIn(false);
-    router.replace('/(auth)/signin')
+    await follow(userid);
   }
 
   return (
@@ -29,19 +27,13 @@ export default function ProfileScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Hello, {user?.username}</ThemedText>
-        <Image source={{uri: user?.avatar}} />
+        <ThemedText type="title">{userid}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.titleContainer}>
-        <TouchableOpacity onPress={() => {router.push('/(follows)/followers')}}>
-          <ThemedText type="subtitle">Followers</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {router.push('/(follows)/following')}}>
-          <ThemedText type="subtitle">Following</ThemedText>
-        </TouchableOpacity>
+        <ThemedText type="title"> Posts:</ThemedText>
       </ThemedView>
       <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
-        <ThemedText style={styles.buttonText} type="title">Sign Out</ThemedText>
+        <ThemedText style={styles.buttonText} type="title">Follow</ThemedText>
       </TouchableOpacity>
     </ParallaxScrollView>
   );

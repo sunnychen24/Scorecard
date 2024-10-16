@@ -9,6 +9,8 @@ import { ThemedView } from '@/components/ThemedView';
 import { useState } from 'react';
 import { getAllUsers } from '@/lib/appwrite';
 import useAppwrite from "@/lib/useAppwrite";
+import ViewProfile from '../(follows)/viewprofile';
+import { router } from 'expo-router';
 
 export default function TabTwoScreen() {
   const [form, setForm] = useState({
@@ -16,7 +18,6 @@ export default function TabTwoScreen() {
   });
   
   const { data: users, refetch } = useAppwrite(getAllUsers);
-  console.log(users)
 
   const onClick = async () => {
     if (form.search === "") Alert.alert("Error", "Missing search input");
@@ -28,7 +29,7 @@ export default function TabTwoScreen() {
   };
 
   const Item = ({title, image}: ItemProps) => (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {userid: title}})}}>
       <Image
         style={styles.tinyLogo}
         source={{
@@ -58,7 +59,6 @@ export default function TabTwoScreen() {
         data={users}
         renderItem={({item}) => <Item title={item.username} image={item.avatar} />}
         keyExtractor={item => item.id}>
-
       </FlatList>
     </ParallaxScrollView>
   );

@@ -8,6 +8,7 @@ export const config = {
     databaseID: '66fda8020038d50aee7b',
     userCollectionID: '66fda94e0000ed474930',
     postCollectionID: '66fda980003bd683dc29',
+    followsCollectionID: '670f428b00192a2e66a1',
     storageId: '66fdab32002450118a1a'
 }
 
@@ -90,4 +91,15 @@ export const signOut = async () => {
     } catch (error) {
         throw new Error(error)
     }
+}
+
+export const follow = async (user) => {
+try {
+    const currentUser = await getCurrentUser();
+
+    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), {follower: currentUser.username, following: user});
+    return fol
+} catch (error) {
+    throw new Error(error)
+}
 }
