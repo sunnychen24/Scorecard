@@ -2,7 +2,7 @@ import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Aler
 import React from 'react'
 import { Link, router } from "expo-router";
 import { ThemedText } from '@/components/ThemedText';
-import {createUser} from '../../lib/appwrite';
+import {usernameExists, createUser} from '../../lib/appwrite';
 import { useState } from "react";
 import { useGlobalContext } from '@/context/GlobalProvider';
 
@@ -20,6 +20,10 @@ const SignUp = () => {
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
     }
+
+    else if (!form.username.match(/^[0-9a-z]+$/)) Alert.alert("Error", "Username must contain only numbers and letters");
+    else if (form.password.length < 8) Alert.alert("Error", "Password must be at least 8 characters long");
+    else if (await usernameExists(form.username)) Alert.alert("Error", "This username is already taken");
     else {
       try {
         const result = await createUser(form.email, form.password, form.username);
@@ -32,6 +36,7 @@ const SignUp = () => {
       }
     }
   }
+
   return (
     <SafeAreaView>
       <TextInput
