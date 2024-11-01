@@ -32,8 +32,6 @@ export const createUser = async (email, password, username) => {
 
         const avatarUrl = avatars.getImage('https://media.istockphoto.com/id/1004838584/vector/golf-hole-icon-on-the-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=LVjEiMhTcQ4vR5tfUj6IW2K1qEOwajt_q4DDVc60Y7Q=');
 
-
-
         await signIn(email, password);
 
         const newUser = await databases.createDocument(
@@ -73,9 +71,10 @@ export const getCurrentUser = async () => {
     }
 }
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (currentUser) => {
     try {
-        const users = await databases.listDocuments(config.databaseID, config.userCollectionID);
+        //gets all users other than current user
+        const users = await databases.listDocuments(config.databaseID, config.userCollectionID, [Query.notEqual('username', currentUser)]);
         return users.documents;
         
     } catch (error) {
@@ -95,11 +94,42 @@ export const signOut = async () => {
 
 export const follow = async (user) => {
 try {
-    const currentUser = await getCurrentUser();
+    const currentAccount = await account.get();
+    if (!currentAccount) throw Error;
 
-    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), {follower: currentUser.username, following: user});
+    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), {follower: currentAccount.$id, following: user});
     return fol
 } catch (error) {
     throw new Error(error)
 }
+}
+
+export const usernameExists = async (user) => {
+    try {
+        const userCheck = await databases.listDocuments(config.databaseID, config.userCollectionID, [Query.equal('username', user)])
+        //console.log(userCheck);
+        if (userCheck.total == 0) return false;
+        return true;
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const getFollowers = async (user) => {
+    try {
+        const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, [Query.equal('following', user)]);
+        return followers.documents;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const getFollowings = async (user) => {
+    try {
+        const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, [Query.equal('follower', user)]);
+        return followings.documents;
+    } catch (error) {
+        throw new Error(error)
+    }
 }

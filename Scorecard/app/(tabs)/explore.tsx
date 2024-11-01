@@ -11,13 +11,15 @@ import { getAllUsers } from '@/lib/appwrite';
 import useAppwrite from "@/lib/useAppwrite";
 import ViewProfile from '../(follows)/viewprofile';
 import { router } from 'expo-router';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 export default function TabTwoScreen() {
+  const {user} = useGlobalContext();
   const [form, setForm] = useState({
     search: "",
   });
   
-  const { data: users, refetch } = useAppwrite(getAllUsers);
+  const { data: users, refetch } = useAppwrite(() => getAllUsers(user?.username));
 
   const onClick = async () => {
     if (form.search === "") Alert.alert("Error", "Missing search input");
