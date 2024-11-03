@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
   return (
@@ -15,6 +16,9 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
+      <TouchableOpacity style={styles.button} onPress={() => {router.push('/(posts)/newpost')}}>
+        <ThemedText style={styles.buttonText} type="title">New Post</ThemedText>
+      </TouchableOpacity>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Home</ThemedText>
       </ThemedView>
@@ -39,4 +43,18 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
   },
+  button:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'green',
+    margin: 12,
+    color: 'white'
+  },
+  buttonText:{
+    color: 'white'
+  }
 });
