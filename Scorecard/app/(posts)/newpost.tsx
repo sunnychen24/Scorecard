@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import { TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 
 export default function newpost() {
-  const [form, setForm] = useState({
+  const [course, setCourse] = useState({
     coursename: "",
+  });
+  const [form, setForm] = useState({
     hole1: "",
     hole2: "",
     hole3: "",
@@ -28,11 +30,11 @@ export default function newpost() {
   return (
     <div>
     <ThemedText type="subtitle">Course:</ThemedText>
-      <TextInput
+    <TextInput
         style={styles.input}
         keyboardType="default"
-        value = {form.coursename}
-        onChangeText={(value) => setForm({ ...form, coursename: value })}
+        value = {course.coursename}
+        onChangeText={(value) => setCourse({ ...form, coursename: value })}
       />
     <div>
       {Object.entries(form).map(([key, val]) => <TextInput
@@ -40,7 +42,8 @@ export default function newpost() {
         keyboardType="numeric"
         value = {val}
         placeholder = {key}
-        onChangeText={(value) => setForm({ ...form, hole1: value })}
+        onChangeText={(value) => setForm({ ...form, [key]: value })}
+        maxLength={1}
     /> )}
     </div>
     <TouchableOpacity style={styles.button} onPress={() => {}}>

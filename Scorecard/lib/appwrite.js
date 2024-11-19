@@ -94,10 +94,10 @@ export const signOut = async () => {
 
 export const follow = async (user) => {
 try {
-    const currentAccount = await account.get();
-    if (!currentAccount) throw Error;
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw Error;
 
-    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), {follower: currentAccount.$id, following: user});
+    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), {follower: currentUser.username, following: user});
     return fol
 } catch (error) {
     throw new Error(error)
