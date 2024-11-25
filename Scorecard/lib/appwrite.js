@@ -133,3 +133,36 @@ export const getFollowings = async (user) => {
         throw new Error(error)
     }
 }
+
+
+
+export const addPost = async (coursename, caption, scores, user) => {
+    try {
+        const currentUser = await getCurrentUser();
+        if (!currentUser) throw Error;
+
+        const newPost = await databases.createDocument(
+            config.databaseID, 
+            config.postCollectionID, 
+            ID.unique(),
+            {course: coursename, caption: caption, scores: scores, creator: user}
+        );
+        return newPost;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const getUserPosts = async (userid) => {
+    try {
+        const posts = await databases.listDocuments(
+          config.databaseID,
+          config.postCollectionID,
+          [Query.equal("creator", userid)]
+        );
+    
+        return posts.documents;
+      } catch (error) {
+        throw new Error(error);
+      }
+    }

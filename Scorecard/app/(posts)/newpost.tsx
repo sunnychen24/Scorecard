@@ -1,12 +1,18 @@
 import { ThemedText } from '@/components/ThemedText';
 import React, { useState } from 'react'
-import { TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
+import { router } from 'expo-router';
+import { addPost } from '@/lib/appwrite';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 export default function newpost() {
-  const [course, setCourse] = useState({
-    coursename: "",
-  });
+  const { user } = useGlobalContext();
+  
   const [form, setForm] = useState({
+    coursename: "",
+    caption: "",
+  });
+  const [holes, setHoles] = useState({
     hole1: "",
     hole2: "",
     hole3: "",
@@ -26,27 +32,54 @@ export default function newpost() {
     hole17: "",
     hole18: "",
   });
+
+  const onClick = async () => {
+    if (form.coursename === "") {
+      Alert.alert("Error", "Please enter course name");
+    }
+    else {
+      try {
+        var scores = ""
+        Object.entries(holes).map(([key, value]) => (
+          scores = scores + value
+        ))
+        await addPost(form.coursename, form.caption, scores, user.$id)
+        router.replace("/home");
+
+      } catch (error) {
+        if (error instanceof Error) Alert.alert("Error", error.message);
+      }
+    }
+  }
   
   return (
     <div>
     <ThemedText type="subtitle">Course:</ThemedText>
     <TextInput
-        style={styles.input}
+        style={styles.largeinput}
         keyboardType="default"
-        value = {course.coursename}
-        onChangeText={(value) => setCourse({ ...form, coursename: value })}
+        value = {form.coursename}
+        onChangeText={(value) => setForm({ ...form, coursename: value })}
       />
     <div>
-      {Object.entries(form).map(([key, val]) => <TextInput
+      {Object.entries(holes).map(([key, val]) => <TextInput
         style={styles.input}
         keyboardType="numeric"
         value = {val}
         placeholder = {key}
-        onChangeText={(value) => setForm({ ...form, [key]: value })}
+        onChangeText={(value) => setHoles({ ...holes, [key]: value })}
         maxLength={1}
     /> )}
     </div>
-    <TouchableOpacity style={styles.button} onPress={() => {}}>
+    
+    <ThemedText type="subtitle">Caption:</ThemedText>
+    <TextInput
+        style={styles.largeinput}
+        keyboardType="default"
+        value = {form.caption}
+        onChangeText={(value) => setForm({ ...form, caption: value })}
+      />
+    <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
     <ThemedText style={styles.buttonText} type="title">Create Post</ThemedText>
     </TouchableOpacity>
     </div>
@@ -56,9 +89,17 @@ export default function newpost() {
 const styles = StyleSheet.create({
   input: {
     height: 40,
+    margin: 5,
+    borderWidth: 1,
+    padding: 10,
+    width: '10%'
+  },
+  largeinput: {
+    height: 40,
     margin: 12,
     borderWidth: 1,
     padding: 10,
+    width: '80%'
   },
   button:{
     alignItems: 'center',
