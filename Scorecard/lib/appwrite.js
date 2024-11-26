@@ -153,7 +153,7 @@ export const addPost = async (coursename, caption, scores, user) => {
     }
 }
 
-export const getUserPosts = async (userid) => {
+export const getUsersPosts = async (userid) => {
     try {
         const posts = await databases.listDocuments(
           config.databaseID,

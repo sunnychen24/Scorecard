@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity, FlatList, View } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -7,17 +7,27 @@ import { ThemedView } from '@/components/ThemedView';
 import { Account } from 'react-native-appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
-import { signOut } from '@/lib/appwrite';
+import { getUsersPosts, signOut } from '@/lib/appwrite';
+import useAppwrite from '@/lib/useAppwrite';
 
 export default function ProfileScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
-
+  const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.$id));
+  console.log(posts)
   const onClick = async () => {
     await signOut();
     setUser(null);
     setIsLoggedIn(false);
     router.replace('/(auth)/signin')
   }
+  
+  type ItemProps = {title: string};
+
+  const Item = ({title}: ItemProps) => (
+    <View style={styles.item}>
+      <ThemedText style={styles.title}>{title}</ThemedText>
+    </View>
+  );
 
   return (
     <ParallaxScrollView
@@ -43,6 +53,11 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
         <ThemedText style={styles.buttonText} type="title">Sign Out</ThemedText>
       </TouchableOpacity>
+      <FlatList
+        data={posts}
+        renderItem={({item}) => <Item title={item.course} />}
+        keyExtractor={item => item.id}>
+      </FlatList>
     </ParallaxScrollView>
   );
 }
@@ -77,5 +92,14 @@ const styles = StyleSheet.create({
   },
   buttonText:{
     color: 'white'
-  }
+  },
+  item: {
+    backgroundColor: '#19f29f',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  title: {
+    fontSize: 32,
+  },
 });
