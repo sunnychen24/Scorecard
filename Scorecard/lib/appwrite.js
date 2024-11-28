@@ -62,7 +62,8 @@ export const getCurrentUser = async () => {
         const currentAccount = await account.get();
         if (!currentAccount) throw Error;
 
-        const currentUser = await databases.listDocuments(config.databaseID, config.userCollectionID, [Query.equal('accountid', currentAccount.$id)])
+        const currentUser = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+            [Query.equal('accountid', currentAccount.$id)])
         if (!currentUser) throw Error;
 
         return currentUser.documents[0];
@@ -74,7 +75,9 @@ export const getCurrentUser = async () => {
 export const getAllUsers = async (currentUser) => {
     try {
         //gets all users other than current user
-        const users = await databases.listDocuments(config.databaseID, config.userCollectionID, [Query.notEqual('username', currentUser)]);
+        console.log(currentUser)
+        const users = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+            [Query.notEqual('accountid', currentUser)]);
         return users.documents;
         
     } catch (error) {
@@ -92,12 +95,26 @@ export const signOut = async () => {
     }
 }
 
+export const getIdByUsername = async (username) => {
+    try {
+        const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+            [Query.equal('username', username)])
+        if (!user) throw Error;
+        console.log(user.documents[0])
+        return user.documents[0].accountid;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const follow = async (user) => {
 try {
+    const userid = await getIdByUsername(user);
     const currentUser = await getCurrentUser();
     if (!currentUser) throw Error;
 
-    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), {follower: currentUser.username, following: user});
+    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), 
+        {follower: currentUser.accountid, following: userid});
     return fol
 } catch (error) {
     throw new Error(error)
@@ -106,7 +123,8 @@ try {
 
 export const usernameExists = async (user) => {
     try {
-        const userCheck = await databases.listDocuments(config.databaseID, config.userCollectionID, [Query.equal('username', user)])
+        const userCheck = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+            [Query.equal('username', user)])
         //console.log(userCheck);
         if (userCheck.total == 0) return false;
         return true;
@@ -118,7 +136,8 @@ export const usernameExists = async (user) => {
 
 export const getFollowers = async (user) => {
     try {
-        const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, [Query.equal('following', user)]);
+        const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
+            [Query.equal('following', user)]);
         return followers.documents;
     } catch (error) {
         throw new Error(error)
@@ -127,7 +146,8 @@ export const getFollowers = async (user) => {
 
 export const getFollowings = async (user) => {
     try {
-        const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, [Query.equal('follower', user)]);
+        const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
+            [Query.equal('follower', user)]);
         return followings.documents;
     } catch (error) {
         throw new Error(error)
@@ -160,7 +180,7 @@ export const getUsersPosts = async (userid) => {
           config.postCollectionID,
           [Query.equal("creator", userid)]
         );
-    
+        console.log(posts.documents)
         return posts.documents;
       } catch (error) {
         throw new Error(error);
