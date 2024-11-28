@@ -43,7 +43,7 @@ export default function newpost() {
         Object.entries(holes).map(([key, value]) => (
           scores = scores + value
         ))
-        await addPost(form.coursename, form.caption, scores, user.$id)
+        await addPost(form.coursename, form.caption, scores, user.accountid)
         router.replace("/home");
 
       } catch (error) {

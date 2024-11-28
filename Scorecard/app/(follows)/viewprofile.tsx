@@ -11,10 +11,10 @@ import { follow, signOut } from '@/lib/appwrite';
 import { useLocalSearchParams } from "expo-router";
 
 export default function ViewProfile() {
-const { userid } = useLocalSearchParams();
+const { username } = useLocalSearchParams();
 
   const onClick = async () => {
-    await follow(userid);
+    await follow(username);
   }
 
   return (
@@ -27,7 +27,7 @@ const { userid } = useLocalSearchParams();
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{userid}</ThemedText>
+        <ThemedText type="title">{username}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title"> Posts:</ThemedText>

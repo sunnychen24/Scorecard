@@ -19,7 +19,7 @@ export default function TabTwoScreen() {
     search: "",
   });
   
-  const { data: users, refetch } = useAppwrite(() => getAllUsers(user?.username));
+  const { data: users, refetch } = useAppwrite(() => getAllUsers(user.$id));
 
   const onClick = async () => {
     if (form.search === "") Alert.alert("Error", "Missing search input");
@@ -31,7 +31,7 @@ export default function TabTwoScreen() {
   };
 
   const Item = ({title, image}: ItemProps) => (
-    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {userid: title}})}}>
+    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {username: title}})}}>
       <Image
         style={styles.tinyLogo}
         source={{

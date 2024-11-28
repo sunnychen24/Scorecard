@@ -12,7 +12,7 @@ import useAppwrite from '@/lib/useAppwrite';
 
 export default function ProfileScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
-  const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.$id));
+  const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.accountid));
   console.log(posts)
   const onClick = async () => {
     await signOut();
@@ -21,11 +21,13 @@ export default function ProfileScreen() {
     router.replace('/(auth)/signin')
   }
   
-  type ItemProps = {title: string};
+  type ItemProps = {title: string, scores: string, caption: string};
 
-  const Item = ({title}: ItemProps) => (
+  const Item = ({title, scores, caption}: ItemProps) => (
     <View style={styles.item}>
       <ThemedText style={styles.title}>{title}</ThemedText>
+      <ThemedText style={styles.scores}>{scores}</ThemedText>
+      <ThemedText style={styles.caption}>{caption}</ThemedText>
     </View>
   );
 
@@ -55,7 +57,7 @@ export default function ProfileScreen() {
       </TouchableOpacity>
       <FlatList
         data={posts}
-        renderItem={({item}) => <Item title={item.course} />}
+        renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption}/>}
         keyExtractor={item => item.id}>
       </FlatList>
     </ParallaxScrollView>
@@ -101,5 +103,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
+  },
+  scores: {
+    fontSize: 22,
+  },
+  caption: {
+    fontSize: 22,
   },
 });
