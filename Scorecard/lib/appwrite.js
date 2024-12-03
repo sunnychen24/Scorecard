@@ -147,10 +147,10 @@ export const usernameExists = async (user) => {
     }
 }
 
-export const getFollowers = async (user) => {
+export const getFollowers = async (userid) => {
     try {
         const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
-            [Query.equal('following', user)]);
+            [Query.equal('following', userid)]);
 
         const usernames = [];
         for (var i=0; i<followers.documents.length; i++){
@@ -163,11 +163,11 @@ export const getFollowers = async (user) => {
     }
 }
 
-export const getFollowings = async (user) => {
+export const getFollowings = async (userid) => {
     try {
         //console.log(user);
         const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
-            [Query.equal('follower', user)]);
+            [Query.equal('follower', userid)]);
 
         //console.log(followings.documents);
         const usernames = [];
@@ -200,22 +200,30 @@ export const addPost = async (coursename, caption, scores, user) => {
 
 export const getUsersPosts = async (userid) => {
     try {
+        //console.log(userid)
+        const posts = await databases.listDocuments(
+          config.databaseID,
+          config.postCollectionID,
+          [Query.equal("creator", userid)]
+        );
+        //console.log(posts.documents)
+        return posts.documents;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+    
+
+export const getHomePosts = async (userid) => {
+    try {
         console.log(userid)
         const posts = await databases.listDocuments(
           config.databaseID,
           config.postCollectionID,
           [Query.equal("creator", userid)]
         );
-        console.log(posts.documents)
+        //console.log(posts.documents)
         return posts.documents;
-      } catch (error) {
-        throw new Error(error);
-      }
-    }
-
-export const getHomePosts = async (userid) => {
-    try {
-        const followings = await getFollowings(userid) 
     } catch (error) {
         throw new Error(error);
     }
