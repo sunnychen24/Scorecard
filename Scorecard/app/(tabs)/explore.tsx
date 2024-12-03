@@ -19,7 +19,7 @@ export default function TabTwoScreen() {
     search: "",
   });
   
-  const { data: users, refetch } = useAppwrite(() => getAllUsers(user.$id));
+  const { data: users, refetch } = useAppwrite(() => getAllUsers(user.accountid));
 
   const onClick = async () => {
     if (form.search === "") Alert.alert("Error", "Missing search input");

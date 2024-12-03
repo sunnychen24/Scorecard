@@ -72,10 +72,9 @@ export const getCurrentUser = async () => {
     }
 }
 
+//gets all users other than current user
 export const getAllUsers = async (currentUser) => {
     try {
-        //gets all users other than current user
-        console.log(currentUser)
         const users = await databases.listDocuments(config.databaseID, config.userCollectionID, 
             [Query.notEqual('accountid', currentUser)]);
         return users.documents;
@@ -97,10 +96,11 @@ export const signOut = async () => {
 
 export const getIdByUsername = async (username) => {
     try {
+        //console.log(username)
         const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
             [Query.equal('username', username)])
         if (!user) throw Error;
-        console.log(user.documents[0])
+        //console.log(user.documents[0])
         return user.documents[0].accountid;
     } catch (error) {
         throw new Error(error)
@@ -109,11 +109,11 @@ export const getIdByUsername = async (username) => {
 
 export const getUsernameById = async (userid) => {
     try {
-        console.log(userid)
+        //console.log(userid)
         const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
             [Query.equal('accountid', userid)])
         if (!user) throw Error;
-        console.log(user.documents[0])
+        //console.log(user.documents[0])
         return user.documents[0].username;
     } catch (error) {
         throw new Error(error)
@@ -156,7 +156,7 @@ export const getFollowers = async (user) => {
         for (var i=0; i<followers.documents.length; i++){
             usernames.push(await getUsernameById(followers.documents[i].follower))
         }
-        console.log(usernames);
+        //console.log(usernames);
         return usernames;
     } catch (error) {
         throw new Error(error)
@@ -165,7 +165,7 @@ export const getFollowers = async (user) => {
 
 export const getFollowings = async (user) => {
     try {
-        console.log(user);
+        //console.log(user);
         const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
             [Query.equal('follower', user)]);
 
@@ -174,7 +174,7 @@ export const getFollowings = async (user) => {
         for (var i=0; i<followings.documents.length; i++){
             usernames.push(await getUsernameById(followings.documents[i].following))
         }
-        console.log(usernames);
+        //console.log(usernames);
         return usernames;
     } catch (error) {
         throw new Error(error)
@@ -200,6 +200,7 @@ export const addPost = async (coursename, caption, scores, user) => {
 
 export const getUsersPosts = async (userid) => {
     try {
+        console.log(userid)
         const posts = await databases.listDocuments(
           config.databaseID,
           config.postCollectionID,
@@ -211,3 +212,11 @@ export const getUsersPosts = async (userid) => {
         throw new Error(error);
       }
     }
+
+export const getHomePosts = async (userid) => {
+    try {
+        const followings = await getFollowings(userid) 
+    } catch (error) {
+        throw new Error(error);
+    }
+}

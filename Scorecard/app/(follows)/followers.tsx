@@ -19,14 +19,14 @@ export default function HomeScreen() {
   };
   
   const Item = ({title, image}: ItemProps) => (
-  <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {userid: title}})}}>
+  <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {username: title}})}}>
     <Image
       style={styles.tinyLogo}
       source={{
         uri: image,
       }}
     />
-    <ThemedText type="subtitle"> {title} </ThemedText>
+    <ThemedText type="subtitle"> {(title)} </ThemedText>
   </TouchableOpacity>
 );
 

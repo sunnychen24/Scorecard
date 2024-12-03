@@ -13,7 +13,7 @@ import useAppwrite from '@/lib/useAppwrite';
 export default function ProfileScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
   const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.accountid));
-  console.log(posts)
+  
   const onClick = async () => {
     await signOut();
     setUser(null);
