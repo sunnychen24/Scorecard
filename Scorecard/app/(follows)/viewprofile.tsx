@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity, FlatList, View } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -7,11 +7,24 @@ import { ThemedView } from '@/components/ThemedView';
 import { Account } from 'react-native-appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
-import { follow, signOut } from '@/lib/appwrite';
+import { follow, getIdByUsername, getUsersPosts, signOut } from '@/lib/appwrite';
 import { useLocalSearchParams } from "expo-router";
+import useAppwrite from '@/lib/useAppwrite';
 
 export default function ViewProfile() {
 const { username } = useLocalSearchParams();
+const { data: posts, refetch } = useAppwrite(async () => getUsersPosts(await getIdByUsername(username)));
+console.log(posts)
+
+type ItemProps = {title: string, scores: string, caption: string};
+
+const Item = ({title, scores, caption}: ItemProps) => (
+  <View style={styles.item}>
+    <ThemedText style={styles.title}>{title}</ThemedText>
+    <ThemedText style={styles.scores}>{scores}</ThemedText>
+    <ThemedText style={styles.caption}>{caption}</ThemedText>
+  </View>
+);
 
   const onClick = async () => {
     await follow(username);
@@ -32,6 +45,13 @@ const { username } = useLocalSearchParams();
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title"> Posts:</ThemedText>
       </ThemedView>
+      <FlatList
+        data={posts}
+        renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption}/>}
+        keyExtractor={item => item.id}>
+      </FlatList>
+      { posts.length === 0 ? <ThemedText type="title"> No posts</ThemedText> : null }
+        
       <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
         <ThemedText style={styles.buttonText} type="title">Follow</ThemedText>
       </TouchableOpacity>
@@ -69,5 +89,20 @@ const styles = StyleSheet.create({
   },
   buttonText:{
     color: 'white'
-  }
+  },
+  title: {
+    fontSize: 32,
+  },
+  scores: {
+    fontSize: 22,
+  },
+  caption: {
+    fontSize: 22,
+  },
+  item: {
+    backgroundColor: '#19f29f',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
 });
