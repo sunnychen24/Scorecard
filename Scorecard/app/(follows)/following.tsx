@@ -13,6 +13,7 @@ export default function HomeScreen() {
   const {user} = useGlobalContext();
   const { data: users, refetch } = useAppwrite(() => getFollowings(user.accountid));
 
+  
   type ItemProps = {
     title: string;
     image: string;
