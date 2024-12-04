@@ -216,14 +216,27 @@ export const getUsersPosts = async (userid) => {
 
 export const getHomePosts = async (userid) => {
     try {
-        console.log(userid)
-        const posts = await databases.listDocuments(
-          config.databaseID,
-          config.postCollectionID,
-          [Query.equal("creator", userid)]
-        );
-        //console.log(posts.documents)
-        return posts.documents;
+        const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
+            [Query.equal('follower', userid)]);
+
+        const posts = await getUsersPosts(userid);
+
+        //add all followings posts
+        for (var i=0; i<followings.documents.length; i++){
+            const userposts = await getUsersPosts(followings.documents[i].following)
+            for (var a=0; a<userposts.length; a++){
+                posts.push(userposts[a])
+            }
+        }
+        posts.sort(function(a, b){
+            let x = a.$updatedAt;
+            let y = b.$updatedAt;
+            if (x < y) {return -1;}
+            if (x > y) {return 1;}
+            return 0;});
+        posts.reverse();
+        //console.log(posts)
+        return posts;
     } catch (error) {
         throw new Error(error);
     }

@@ -24,11 +24,12 @@ export default function HomeScreen() {
 
   type ItemProps = {title: string, scores: string, caption: string};
 
-  const Item = ({title, scores, caption}: ItemProps) => (
+  const Item = ({title, scores, caption, date}: ItemProps) => (
     <View style={styles.item}>
       <ThemedText style={styles.title}>{title}</ThemedText>
       <ThemedText style={styles.scores}>{scores}</ThemedText>
       <ThemedText style={styles.caption}>{caption}</ThemedText>
+      <ThemedText style={styles.caption}>{date}</ThemedText>
     </View>
   )
 
@@ -49,7 +50,7 @@ export default function HomeScreen() {
       </ThemedView>
       <FlatList
         data={posts}
-        renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption}/>}
+        renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption} date={item.$updatedAt}/>}
         keyExtractor={item => item.id}>
       </FlatList>
     </ParallaxScrollView>
