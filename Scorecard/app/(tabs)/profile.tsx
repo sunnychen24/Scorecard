@@ -9,9 +9,11 @@ import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
 import { getUsersPosts, signOut } from '@/lib/appwrite';
 import useAppwrite from '@/lib/useAppwrite';
+import { withDecay } from 'react-native-reanimated';
 
 export default function ProfileScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
+  console.log(user.avatar)
   const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.accountid));
   
   const onClick = async () => {
@@ -41,8 +43,8 @@ export default function ProfileScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Hello, {user?.username}</ThemedText>
-        <Image source={{uri: user?.avatar}} />
+        <Image style={styles.avatar} source={{uri: user?.avatar}} />
+        <ThemedText type="title">{user?.username}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.titleContainer}>
         <TouchableOpacity onPress={() => {router.push('/(follows)/followers')}}>
@@ -109,5 +111,9 @@ const styles = StyleSheet.create({
   },
   caption: {
     fontSize: 22,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
   },
 });

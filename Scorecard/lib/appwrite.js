@@ -152,12 +152,13 @@ export const getFollowers = async (userid) => {
         const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
             [Query.equal('following', userid)]);
 
-        const usernames = [];
+        const users = [];
         for (var i=0; i<followers.documents.length; i++){
-            usernames.push(await getUsernameById(followers.documents[i].follower))
+            users.push(await databases.listDocuments(config.databaseID, config.userCollectionID, 
+                [Query.equal('accountid', followers.documents[i].follower)]))
         }
-        //console.log(usernames);
-        return usernames;
+        console.log(users);
+        return users;
     } catch (error) {
         throw new Error(error)
     }
@@ -170,12 +171,13 @@ export const getFollowings = async (userid) => {
             [Query.equal('follower', userid)]);
 
         //console.log(followings.documents);
-        const usernames = [];
+        const users = [];
         for (var i=0; i<followings.documents.length; i++){
-            usernames.push(await getUsernameById(followings.documents[i].following))
+            users.push(await databases.listDocuments(config.databaseID, config.userCollectionID, 
+                [Query.equal('accountid', followings.documents[i].following)]))
         }
-        //console.log(usernames);
-        return usernames;
+        //console.log(users);
+        return users;
     } catch (error) {
         throw new Error(error)
     }
@@ -237,6 +239,18 @@ export const getHomePosts = async (userid) => {
         posts.reverse();
         //console.log(posts)
         return posts;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+export const getAvatar = async (username) => {
+    try {
+        const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+            [Query.equal('username', username)])
+        if (!user) throw Error;
+        //console.log(user.documents[0])
+        return user.documents[0].avatar;
     } catch (error) {
         throw new Error(error);
     }
