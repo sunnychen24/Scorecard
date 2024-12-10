@@ -12,8 +12,9 @@ import { useLocalSearchParams } from "expo-router";
 import useAppwrite from '@/lib/useAppwrite';
 
 export default function ViewProfile() {
-const { username } = useLocalSearchParams();
-const { data: posts, refetch } = useAppwrite(async () => getUsersPosts(await getIdByUsername(username)));
+const username = useLocalSearchParams();
+console.log(username.avatar)
+const { data: posts, refetch } = useAppwrite(() => getUsersPosts(username.accountid));
 console.log(posts)
 
 type ItemProps = {title: string, scores: string, caption: string};
@@ -40,7 +41,8 @@ const Item = ({title, scores, caption}: ItemProps) => (
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{username}</ThemedText>
+        <Image style={styles.avatar} source={{uri: username.avatar}} />
+        <ThemedText type="title">{username.username}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title"> Posts:</ThemedText>
@@ -104,5 +106,9 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
   },
 });

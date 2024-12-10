@@ -6,12 +6,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
 import useAppwrite from '@/lib/useAppwrite';
-import { getFollowers } from '@/lib/appwrite';
+import { getAvatar, getFollowers } from '@/lib/appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 export default function HomeScreen() {
   const {user} = useGlobalContext();
   const { data: users, refetch } = useAppwrite(() => getFollowers(user.accountid));
+  console.log(users)
 
   type ItemProps = {
     title: string;
@@ -44,7 +45,7 @@ export default function HomeScreen() {
       </ThemedView>
       <FlatList
         data={users}
-        renderItem={({item}) => <Item title={item} image={"https://cloud.appwrite.io/v1/avatars/image?url=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1004838584%2Fvector%2Fgolf-hole-icon-on-the-white-background-vector-illustration.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLVjEiMhTcQ4vR5tfUj6IW2K1qEOwajt_q4DDVc60Y7Q%3D&project=66fda14b00114a1f380b"} />}
+        renderItem={({item}) => <Item title={item.documents[0].username} image={item.documents[0].avatar} />}
         keyExtractor={item => item.id}>
       </FlatList>
     </ParallaxScrollView>

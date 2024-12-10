@@ -12,6 +12,7 @@ import useAppwrite from "@/lib/useAppwrite";
 import ViewProfile from '../(follows)/viewprofile';
 import { router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalProvider';
+import { Models } from 'react-native-appwrite';
 
 export default function TabTwoScreen() {
   const {user} = useGlobalContext();
@@ -26,19 +27,18 @@ export default function TabTwoScreen() {
   }
 
   type ItemProps = {
-    title: string;
-    image: string;
+    user: Models.Document;
   };
 
-  const Item = ({title, image}: ItemProps) => (
-    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {username: title}})}}>
+  const Item = ({user}: ItemProps) => (
+    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: user})}}>
       <Image
         style={styles.tinyLogo}
         source={{
-          uri: image,
+          uri: user.avatar,
         }}
       />
-      <ThemedText type="subtitle"> {title} </ThemedText>
+      <ThemedText type="subtitle"> {user.username} </ThemedText>
     </TouchableOpacity>
   );
 
@@ -59,7 +59,7 @@ export default function TabTwoScreen() {
       </TouchableOpacity>
       <FlatList
         data={users}
-        renderItem={({item}) => <Item title={item.username} image={item.avatar} />}
+        renderItem={({item}) => <Item user={item} />}
         keyExtractor={item => item.id}>
       </FlatList>
     </ParallaxScrollView>
