@@ -60,7 +60,7 @@ export default function TabTwoScreen() {
       <FlatList
         data={users}
         renderItem={({item}) => <Item user={item} />}
-        keyExtractor={item => item.id}>
+        keyExtractor={item => item.accountid}>
       </FlatList>
     </ParallaxScrollView>
   );

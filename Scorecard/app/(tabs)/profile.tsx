@@ -13,7 +13,6 @@ import { withDecay } from 'react-native-reanimated';
 
 export default function ProfileScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
-  console.log(user.avatar)
   const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.accountid));
   
   const onClick = async () => {
@@ -45,6 +44,9 @@ export default function ProfileScreen() {
       <ThemedView style={styles.titleContainer}>
         <Image style={styles.avatar} source={{uri: user?.avatar}} />
         <ThemedText type="title">{user?.username}</ThemedText>
+        <TouchableOpacity style={styles.button} onPress={() => {router.push('/(profile)/editprofile')}}>
+        <ThemedText style={styles.buttonText} type="title">Edit Profile</ThemedText>
+      </TouchableOpacity>
       </ThemedView>
       <ThemedView style={styles.titleContainer}>
         <TouchableOpacity onPress={() => {router.push('/(follows)/followers')}}>
@@ -60,7 +62,7 @@ export default function ProfileScreen() {
       <FlatList
         data={posts}
         renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption}/>}
-        keyExtractor={item => item.id}>
+        keyExtractor={item => item.$id}>
       </FlatList>
     </ParallaxScrollView>
   );

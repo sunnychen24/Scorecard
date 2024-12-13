@@ -8,6 +8,7 @@ import { useGlobalContext } from '@/context/GlobalProvider';
 import useAppwrite from '@/lib/useAppwrite';
 import { router } from 'expo-router';
 import { getFollowings } from '@/lib/appwrite';
+import { Models } from 'react-native-appwrite';
 
 export default function HomeScreen() {
   const {user} = useGlobalContext();
@@ -15,19 +16,18 @@ export default function HomeScreen() {
   console.log(users)
   
   type ItemProps = {
-    title: string;
-    image: string;
+    user: Models.Document;
   };
   
-  const Item = ({title, image}: ItemProps) => (
-  <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {username: title}})}}>
+  const Item = ({user}: ItemProps) => (
+  <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: user})}}>
     <Image
       style={styles.tinyLogo}
       source={{
-        uri: image,
+        uri: user.avatar,
       }}
     />
-    <ThemedText type="subtitle"> {title} </ThemedText>
+    <ThemedText type="subtitle"> {user.username} </ThemedText>
   </TouchableOpacity>
 );
   return (
@@ -44,8 +44,8 @@ export default function HomeScreen() {
       </ThemedView>
       <FlatList
         data={users}
-        renderItem={({item}) => <Item title={item.documents[0].username} image={item.documents[0].avatar} />}
-        keyExtractor={item => item.id}>
+        renderItem={({item}) => <Item user={item} />}
+        keyExtractor={item => item.accountid}>
       </FlatList>
     </ParallaxScrollView>
   );
