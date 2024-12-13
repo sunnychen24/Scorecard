@@ -77,6 +77,7 @@ export const getAllUsers = async (currentUser) => {
     try {
         const users = await databases.listDocuments(config.databaseID, config.userCollectionID, 
             [Query.notEqual('accountid', currentUser)]);
+        console.log(users.documents)
         return users.documents;
         
     } catch (error) {
@@ -154,8 +155,9 @@ export const getFollowers = async (userid) => {
 
         const users = [];
         for (var i=0; i<followers.documents.length; i++){
-            users.push(await databases.listDocuments(config.databaseID, config.userCollectionID, 
-                [Query.equal('accountid', followers.documents[i].follower)]))
+            const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+                [Query.equal('accountid', followers.documents[i].follower)])
+            users.push(user.documents[0])
         }
         console.log(users);
         return users;
@@ -173,10 +175,11 @@ export const getFollowings = async (userid) => {
         //console.log(followings.documents);
         const users = [];
         for (var i=0; i<followings.documents.length; i++){
-            users.push(await databases.listDocuments(config.databaseID, config.userCollectionID, 
-                [Query.equal('accountid', followings.documents[i].following)]))
+            const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
+                [Query.equal('accountid', followings.documents[i].following)])
+            users.push(user.documents[0])
         }
-        //console.log(users);
+        console.log(users);
         return users;
     } catch (error) {
         throw new Error(error)

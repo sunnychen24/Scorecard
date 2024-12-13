@@ -22,7 +22,7 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  type ItemProps = {title: string, scores: string, caption: string};
+  type ItemProps = {title: string, scores: string, caption: string, date: string};
 
   const Item = ({title, scores, caption, date}: ItemProps) => (
     <View style={styles.item}>
