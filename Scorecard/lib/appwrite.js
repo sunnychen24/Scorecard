@@ -1,5 +1,5 @@
 import SignIn from '@/app/(auth)/signin';
-import {Account, Client, Databases, ID, Avatars, Query } from 'react-native-appwrite';
+import {Account, Client, Databases, ID, Avatars, Query, Storage } from 'react-native-appwrite';
 
 export const config = {
     endpoint: 'https://cloud.appwrite.io/v1',
@@ -23,6 +23,7 @@ client
 const account = new Account(client);
 const databases = new Databases(client);
 const avatars = new Avatars(client);
+const storage = new Storage(client);
 
 export const createUser = async (email, password, username) => {
     try {
@@ -254,6 +255,18 @@ export const getAvatar = async (username) => {
         if (!user) throw Error;
         //console.log(user.documents[0])
         return user.documents[0].avatar;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+export const changeAvatar = async (image, userid) => {
+    try {
+        const { mimeType, ...rest } = image;
+        const asset = { type: mimeType, ...rest };
+        
+        const uploadedFile = await storage.createFile(config.storageId, ID.unique(), asset);
+        return uploadedFile;
     } catch (error) {
         throw new Error(error);
     }
