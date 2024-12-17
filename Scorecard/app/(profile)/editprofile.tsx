@@ -3,12 +3,68 @@ import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { Ionicons } from '@expo/vector-icons'
-import React from 'react'
+import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { StyleSheet, Image, View } from 'react-native'
+import { StyleSheet, Image, View, Alert } from 'react-native'
 import { router } from 'expo-router'
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from 'expo-image-picker';
+import { changeAvatar } from '@/lib/appwrite'
+
+
 export default function editprofile() {
     const {user, setUser, setIsLoggedIn} = useGlobalContext();
+    const [uploading, setUploading] = useState(false);
+    const [form, setForm] = useState({
+      title: "",
+      video: null,
+      thumbnail: null,
+      prompt: "",
+    });
+
+    const openPicker = async (selectType: string) => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        quality: 1,
+      });
+  
+      if (!result.canceled) {
+        if (selectType === "image") {
+          setForm({
+            ...form,
+            thumbnail: result.assets[0],
+          });
+        }
+      } else {
+        setTimeout(() => {
+          Alert.alert("Document picked", JSON.stringify(result, null, 2));
+        }, 100);
+      }
+    };
+    
+    const onClick = async () => {
+      try {
+        if (form.thumbnail){
+          setUploading(true);
+          const result = await changeAvatar(form.thumbnail, user?.accountid);
+          
+          router.push('/(tabs)/profile');
+        }
+      } catch (error) {
+        if (error instanceof Error) Alert.alert("Error", error.message);
+      } finally {
+        setForm({
+          title: "",
+          video: null,
+          thumbnail: null,
+          prompt: "",
+        });
+  
+        setUploading(false);
+      }
+    }
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -19,15 +75,24 @@ export default function editprofile() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <Image style={styles.avatar} source={{uri: user?.avatar}} />
+        { form.thumbnail!==null ? <Image style={styles.avatar} source={{uri: form.thumbnail.uri}} /> : <Image style={styles.avatar} source={{uri: user?.avatar}} /> }
+        
         <ThemedText type="title">{user?.username}</ThemedText>
         </ThemedView>
+
+        <TouchableOpacity onPress={() => openPicker("image")}>
+              <View>
+                <ThemedText>
+                  Choose a file
+                </ThemedText>
+              </View>
+          </TouchableOpacity>
 
         <ThemedView style={styles.titleContainer}>
         <TouchableOpacity style={styles.button} onPress={() => {router.push('/(tabs)/profile')}}>
             <ThemedText style={styles.buttonText} type="title">Back</ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {router.push('/(tabs)/profile')}}>
+        <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
             <ThemedText style={styles.buttonText} type="title">Save</ThemedText>
         </TouchableOpacity>
         </ThemedView>

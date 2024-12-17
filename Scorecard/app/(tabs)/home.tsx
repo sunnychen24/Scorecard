@@ -51,7 +51,7 @@ export default function HomeScreen() {
       <FlatList
         data={posts}
         renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption} date={item.$updatedAt}/>}
-        keyExtractor={item => item.id}>
+        keyExtractor={item => item.postid}>
       </FlatList>
     </ParallaxScrollView>
   );
