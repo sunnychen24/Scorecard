@@ -4,22 +4,20 @@ import { ThemedView } from '@/components/ThemedView'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { Ionicons } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native'
 import { StyleSheet, Image, View, Alert } from 'react-native'
 import { router } from 'expo-router'
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from 'expo-image-picker';
-import { changeAvatar } from '@/lib/appwrite'
+import { changeAvatar, createVideoPost, uploadFile } from '@/lib/appwrite'
+import { uploadFile1 } from '@/lib/test'
 
 
 export default function editprofile() {
     const {user, setUser, setIsLoggedIn} = useGlobalContext();
     const [uploading, setUploading] = useState(false);
     const [form, setForm] = useState({
-      title: "",
-      video: null,
       thumbnail: null,
-      prompt: "",
     });
 
     const openPicker = async (selectType: string) => {
@@ -28,7 +26,7 @@ export default function editprofile() {
         allowsEditing: true,
         quality: 1,
       });
-  
+      
       if (!result.canceled) {
         if (selectType === "image") {
           setForm({
@@ -43,22 +41,25 @@ export default function editprofile() {
       }
     };
     
-    const onClick = async () => {
+    const onClick = async () => { 
+      if (!form.thumbnail) {
+      return console.log("Please provide all fields");
+    }
       try {
+        
+        //console.log(form)
         if (form.thumbnail){
           setUploading(true);
-          const result = await changeAvatar(form.thumbnail, user?.accountid);
+          //await createVideoPost({...form,userId: user?.userid,});
+          await uploadFile1();
           
           router.push('/(tabs)/profile');
         }
       } catch (error) {
-        if (error instanceof Error) Alert.alert("Error", error.message);
+        if (error instanceof Error) console.log("Error", error.message);
       } finally {
         setForm({
-          title: "",
-          video: null,
           thumbnail: null,
-          prompt: "",
         });
   
         setUploading(false);

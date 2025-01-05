@@ -7,6 +7,12 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import GlobalProvider from '../context/GlobalProvider';
+import { Slot } from "expo-router";
+
+// Import your global CSS file
+import "../global.css";
+
+//export default Slot;
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
