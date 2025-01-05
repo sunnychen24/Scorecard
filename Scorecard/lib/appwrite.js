@@ -9,7 +9,7 @@ export const config = {
     userCollectionID: '66fda94e0000ed474930',
     postCollectionID: '66fda980003bd683dc29',
     followsCollectionID: '670f428b00192a2e66a1',
-    storageId: '66fdab32002450118a1a'
+    storageId: '6770e364002ac664ecbd'
 }
 
 // Init your React Native SDK
@@ -260,14 +260,82 @@ export const getAvatar = async (username) => {
     }
 }
 
-export const changeAvatar = async (image, userid) => {
+// Upload File
+export async function uploadFile(file, type) {
+    if (!file) return;
+  
+    const { mimeType, ...rest } = file;
+    const asset = { type: mimeType, ...rest };
+    // const asset1 = {uri: asset.uri, name: asset.fileName, type: asset.type};
+    // const formData = new FormData();
+    // formData.append('file', file);
+
     try {
-        const { mimeType, ...rest } = image;
-        const asset = { type: mimeType, ...rest };
-        
-        const uploadedFile = await storage.createFile(config.storageId, ID.unique(), asset);
-        return uploadedFile;
+        //console.log(asset1)
+      const uploadedFile = await storage.createFile(
+        config.storageId,
+        ID.unique(),
+        formData
+      );
+  
+      //const fileUrl = await getFilePreview(uploadedFile.$id, type);
+      //return fileUrl;
+      return uploadedFile;
     } catch (error) {
         throw new Error(error);
     }
-}
+  }
+  
+  // Get File Preview
+  export async function getFilePreview(fileId, type) {
+    let fileUrl;
+  
+    try {
+      if (type === "video") {
+        fileUrl = storage.getFileView(config.storageId, fileId);
+      } else if (type === "image") {
+        fileUrl = storage.getFilePreview(
+            config.storageId,
+          fileId,
+          2000,
+          2000,
+          "top",
+          100
+        );
+      } else {
+        throw new Error("Invalid file type");
+      }
+  
+      if (!fileUrl) throw Error;
+  
+      return fileUrl;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  
+  // Create Video Post
+  export async function createVideoPost(form) {
+    try {
+      const [thumbnailUrl] = await Promise.all([
+        uploadFile(form.thumbnail, "image"),
+      ]);
+  
+    //   const newPost = await databases.createDocument(
+    //     config.databaseId,
+    //     config.videoCollectionId,
+    //     ID.unique(),
+    //     {
+    //       title: form.title,
+    //       thumbnail: thumbnailUrl,
+    //       video: videoUrl,
+    //       prompt: form.prompt,
+    //       creator: form.userId,
+    //     }
+    //   );
+  
+    //  return newPost;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
