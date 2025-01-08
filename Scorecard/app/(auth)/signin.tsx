@@ -33,48 +33,54 @@ const SignIn = () => {
   }
 
   return (
-    <SafeAreaView>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
+    <SafeAreaView className="bg-white h-full w-full">
+      <Text className='flex mt-20 mb-4 mx-12 text-6xl font-[310] text-primary py-3'>Login to your account</Text>
+      <TextInput className='mx-12 my-2.5 p-4 border border-primary rounded-xl text-3xl text-primary'
+        placeholder="Username"
+        placeholderTextColor="#007900"
         keyboardType="email-address"
         value = {form.email}
         onChangeText={(value) => setForm({ ...form, email: value })}
       />
-      <TextInput
-        style={styles.input}
+      <TextInput className='mx-12 my-2.5 p-4 border border-primary rounded-xl text-3xl text-primary'
         placeholder="Password"
+        placeholderTextColor="#007900"
         keyboardType="default"
         value = {form.password}
         onChangeText={(value) => setForm({ ...form, password: value })}
       />
-      <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
-      <ThemedText style={styles.buttonText} type="title">Sign In</ThemedText>
-      </TouchableOpacity>
+      <View className='absolute inset-x-0 bottom-10'>
+        <TouchableOpacity className='bg-primary mx-12 rounded-xl' onPress={() => {onClick();}}>
+          <Text className='p-4 text-3xl flex self-center text-white'>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text className='m-10 text-3xl flex self-center text-primary'>Back</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   )
 }
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  button:{
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'green',
-    padding: 10,
-    margin: 12,
-  },
-  buttonText:{
-    color: 'white'
-  }
-});
+// const styles = StyleSheet.create({
+//   input: {
+//     height: 40,
+//     margin: 12,
+//     borderWidth: 1,
+//     padding: 10,
+//   },
+//   button:{
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     paddingVertical: 12,
+//     paddingHorizontal: 32,
+//     borderRadius: 4,
+//     elevation: 3,
+//     backgroundColor: 'green',
+//     padding: 10,
+//     margin: 12,
+//   },
+//   buttonText:{
+//     color: 'white'
+//   }
+// });
 
 export default SignIn
