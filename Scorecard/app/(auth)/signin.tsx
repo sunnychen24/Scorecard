@@ -36,7 +36,7 @@ const SignIn = () => {
     <SafeAreaView className="bg-white h-full w-full">
       <Text className='flex mt-20 mb-4 mx-12 text-6xl font-[310] text-primary py-3'>Login to your account</Text>
       <TextInput className='mx-12 my-2.5 p-4 border border-primary rounded-xl text-3xl text-primary'
-        placeholder="Username"
+        placeholder="Email"
         placeholderTextColor="#007900"
         keyboardType="email-address"
         value = {form.email}
