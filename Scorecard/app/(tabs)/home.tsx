@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TouchableOpacity, View, FlatList, RefreshControl } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity, View, FlatList, RefreshControl, SafeAreaView, Text } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -9,6 +9,7 @@ import useAppwrite from '@/lib/useAppwrite';
 import { getHomePosts } from '@/lib/appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
@@ -34,26 +35,28 @@ export default function HomeScreen() {
   )
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
+    <SafeAreaView className="bg-white h-full w-full">
+      <View className='flex flex-row justify-center pt-3 pb-4 border-b-[5px] border-stone-400'>
+        <TouchableOpacity className='pr-[94]'>
+          <Ionicons size={28} name='search'></Ionicons>
+        </TouchableOpacity>
+        <Text className='text-3xl pl-7'>Home</Text>
+        <TouchableOpacity className='pl-[82]'>
+          <Ionicons size={28} name='notifications-outline'></Ionicons>
+        </TouchableOpacity>
+        <TouchableOpacity className='pl-3'>
+          <Ionicons size={28} name='chatbubble-outline'></Ionicons>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.button} onPress={() => {router.push('/(posts)/newpost')}}>
         <ThemedText style={styles.buttonText} type="title">New Post</ThemedText>
       </TouchableOpacity>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Home</ThemedText>
-      </ThemedView>
       <FlatList
         data={posts}
         renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption} date={item.$updatedAt}/>}
         keyExtractor={item => item.postid}>
       </FlatList>
-    </ParallaxScrollView>
+    </SafeAreaView>
   );
 }
 
