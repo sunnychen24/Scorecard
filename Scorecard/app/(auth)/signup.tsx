@@ -71,14 +71,14 @@ const SignUp = () => {
           value = {form.password}
           onChangeText={(value) => setForm({ ...form, password: value })}
         />
-        <Text className='mx-12 mt-28 mb-3'>By continuing, you are agreeing to our 
+        <Text className='mx-12 mt-32 mb-3'>By continuing, you are agreeing to our 
           <TouchableOpacity><Text className='underline'>Terms of Service</Text></TouchableOpacity>
           </Text>
         <TouchableOpacity className='bg-primary mx-12 rounded-xl' onPress={() => {onClick();}}>
           <Text className='p-4 text-3xl flex self-center text-white'>Continue</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text className='m-10 text-3xl flex self-center text-primary'>Back</Text>
+          <Text className='m-7 text-3xl flex self-center text-primary'>Back</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

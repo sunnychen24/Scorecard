@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView} from 'react-native'
 import React, { useState } from 'react'
 import { Link, router } from "expo-router";
 import { ThemedText } from '@/components/ThemedText';
@@ -34,6 +34,7 @@ const SignIn = () => {
 
   return (
     <SafeAreaView className="bg-white h-full w-full">
+      <ScrollView className='h-full w-full'>
       <Text className='flex mt-20 mb-4 mx-12 text-6xl font-[310] text-primary py-3'>Login to your account</Text>
       <TextInput className='mx-12 my-2.5 p-4 border border-primary rounded-xl text-3xl text-primary'
         placeholder="Email"
@@ -49,14 +50,15 @@ const SignIn = () => {
         value = {form.password}
         onChangeText={(value) => setForm({ ...form, password: value })}
       />
-      <View className='absolute inset-x-0 bottom-10'>
+      <View className='mt-[300]'>
         <TouchableOpacity className='bg-primary mx-12 rounded-xl' onPress={() => {onClick();}}>
           <Text className='p-4 text-3xl flex self-center text-white'>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text className='m-10 text-3xl flex self-center text-primary'>Back</Text>
+          <Text className='m-7 text-3xl flex self-center text-primary'>Back</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
