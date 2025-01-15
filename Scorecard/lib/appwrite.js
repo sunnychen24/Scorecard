@@ -153,7 +153,8 @@ export const getFollowers = async (userid) => {
     try {
         const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
             [Query.equal('following', userid)]);
-
+        
+        
         const users = [];
         for (var i=0; i<followers.documents.length; i++){
             const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
@@ -162,6 +163,17 @@ export const getFollowers = async (userid) => {
         }
         console.log(users);
         return users;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const getFollowerCount = async (userid) => {
+    try {
+        const followers = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
+            [Query.equal('following', userid)]);
+
+        return followers.total
     } catch (error) {
         throw new Error(error)
     }
@@ -182,6 +194,17 @@ export const getFollowings = async (userid) => {
         }
         console.log(users);
         return users;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const getFollowingCount = async (userid) => {
+    try {
+        const following = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
+            [Query.equal('follower', userid)]);
+
+        return following.total
     } catch (error) {
         throw new Error(error)
     }
@@ -212,13 +235,26 @@ export const getUsersPosts = async (userid) => {
           config.postCollectionID,
           [Query.equal("creator", userid)]
         );
-        //console.log(posts.documents)
+        //console.log(posts.total)
         return posts.documents;
     } catch (error) {
         throw new Error(error);
     }
 }
     
+export const getPostCount = async (userid) => {
+    try {
+        const posts = await databases.listDocuments(
+            config.databaseID,
+            config.postCollectionID,
+            [Query.equal("creator", userid)]
+          );
+
+        return posts.total
+    } catch (error) {
+        throw new Error(error);
+    }
+}
 
 export const getHomePosts = async (userid) => {
     try {

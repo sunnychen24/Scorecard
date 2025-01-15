@@ -7,7 +7,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { Account } from 'react-native-appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
-import { getUsersPosts, signOut } from '@/lib/appwrite';
+import { getFollowerCount, getFollowingCount, getPostCount, getUsersPosts, signOut } from '@/lib/appwrite';
 import useAppwrite from '@/lib/useAppwrite';
 import { withDecay } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,9 @@ import { Ionicons } from '@expo/vector-icons';
 export default function ProfileScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
   const { data: posts, refetch } = useAppwrite(() => getUsersPosts(user.accountid));
+  const {data: postcount} = useAppwrite(() => getPostCount(user.accountid));
+  const {data: followercount} = useAppwrite(() => getFollowerCount(user.accountid));
+  const {data: followingcount} = useAppwrite(() => getFollowingCount(user.accountid));
   
   const onClick = async () => {
     await signOut();
@@ -46,16 +49,38 @@ export default function ProfileScreen() {
       </View>
       <ScrollView>
       <Image className="w-full h-[300px] -top-24" resizeMode="contain" source={require('@/assets/images/background.jpg')}/>
-      <View className='bg-white -top-40'>
+      <View className='bg-white -top-48'>
         <View className='flex flex-row'>
-          <Image className='w-[100px] h-[100px] pl-10' resizeMode="contain" source={{uri: user?.avatar}} />
-          <Text>Followers</Text>
-          <Text>Following</Text>
+          <Image className='w-[115px] h-[115px] border border-black border-[5px] rounded-full ml-6 -top-6' resizeMode="contain" source={{uri: user?.avatar}} />
+          <View className='flex flex-col'>
+            <View className='flex flex-row m-3 w-64 h-12'>
+              <TouchableOpacity className='flex flex-col w-1/3'>
+                <Text className='text-3xl self-center'>{postcount}</Text>
+                <Text className='text-sm self-center'>Posts</Text>
+              </TouchableOpacity>
+              <TouchableOpacity className='flex flex-col w-1/3'>
+                <Text className='text-3xl self-center'>{followercount}</Text>
+                <Text className='text-sm self-center'>Followers</Text>
+              </TouchableOpacity>
+              <TouchableOpacity className='flex flex-col w-1/3'>
+                <Text className='text-3xl self-center'>{followingcount}</Text>
+                <Text className='text-sm self-center'>Following</Text>
+              </TouchableOpacity>
+            </View>
+            <View className='flex flex-row self-center w-60'>
+              <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg mr-2' onPress={() => {router.push('/(profile)/editprofile')}}>
+                  <Text className='self-center py-2 font-medium'>Edit profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg'>
+                  <Text className='self-center py-2 font-medium'>Share profile</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <Text className='text-3xl'>{user?.username}</Text>
-        <TouchableOpacity onPress={() => {router.push('/(profile)/editprofile')}}>
-          <ThemedText type="title">Edit Profile</ThemedText>
-        </TouchableOpacity>
+        <View className='ml-6 w-[115px] mb-6'>
+          <Text className='text-4xl self-center'>{user?.username}</Text>
+        </View>
+        <View className='border-b-[5px] border-stone-400'></View>
         <TouchableOpacity onPress={() => {onClick();}}>
         <ThemedText type="title">Sign Out</ThemedText>
         </TouchableOpacity>
