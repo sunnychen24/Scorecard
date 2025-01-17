@@ -235,6 +235,12 @@ export const getUsersPosts = async (userid) => {
           config.postCollectionID,
           [Query.equal("creator", userid)]
         );
+        
+        //convert userid to usernames
+        for (var i=0; i<posts.documents.length; i++){
+            const username = await getUsernameById(posts.documents[i].creator)
+            posts.documents[i].username = username
+        }
         //console.log(posts.total)
         return posts.documents;
     } catch (error) {
