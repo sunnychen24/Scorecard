@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TouchableOpacity, View, FlatList, RefreshControl, SafeAreaView, Text } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity, View, FlatList, RefreshControl, SafeAreaView, Text, ScrollView } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -10,10 +10,12 @@ import { getHomePosts } from '@/lib/appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { Post } from '@/components/Post';
 
 export default function HomeScreen() {
   const {user, setUser, setIsLoggedIn} = useGlobalContext();
   const { data: posts, refetch } = useAppwrite(() => getHomePosts(user.accountid));
+  console.log(posts)
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -51,11 +53,14 @@ export default function HomeScreen() {
       <TouchableOpacity style={styles.button} onPress={() => {router.push('/(posts)/newpost')}}>
         <ThemedText style={styles.buttonText} type="title">New Post</ThemedText>
       </TouchableOpacity>
-      <FlatList
-        data={posts}
-        renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption} date={item.$updatedAt}/>}
-        keyExtractor={item => item.postid}>
-      </FlatList>
+      <ScrollView>
+        <FlatList
+            data={posts}
+            renderItem={({item}) => <Post prop={item}/>}
+            keyExtractor={item => item.postid}
+            scrollEnabled={false}>
+          </FlatList>
+      </ScrollView>
     </SafeAreaView>
   );
 }

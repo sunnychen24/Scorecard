@@ -240,7 +240,9 @@ export const getUsersPosts = async (userid) => {
         for (var i=0; i<posts.documents.length; i++){
             const username = await getUsernameById(posts.documents[i].creator)
             posts.documents[i].username = username
+            posts.documents[i].avatar = await getAvatar(username)
         }
+        //console.log(posts)
         //console.log(posts.total)
         return posts.documents;
     } catch (error) {

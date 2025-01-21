@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TouchableOpacity, FlatList, View } from 'react-native';
+import { Image, StyleSheet, Platform, TouchableOpacity, FlatList, View, SafeAreaView, Text, ScrollView } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -7,15 +7,21 @@ import { ThemedView } from '@/components/ThemedView';
 import { Account } from 'react-native-appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
-import { follow, getIdByUsername, getUsersPosts, signOut } from '@/lib/appwrite';
+import { follow, getFollowerCount, getFollowingCount, getIdByUsername, getPostCount, getUsernameById, getUsersPosts, signOut } from '@/lib/appwrite';
 import { useLocalSearchParams } from "expo-router";
 import useAppwrite from '@/lib/useAppwrite';
+import { Ionicons } from '@expo/vector-icons';
+import { Post } from '@/components/Post';
 
 export default function ViewProfile() {
-const username = useLocalSearchParams();
-console.log(username.avatar)
-const { data: posts, refetch } = useAppwrite(() => getUsersPosts(username.accountid));
-console.log(posts)
+const userid = useLocalSearchParams();
+const { data: posts, refetch } = useAppwrite(() => getUsersPosts(userid.userid));
+const {data: postcount} = useAppwrite(() => getPostCount(userid.userid));
+const {data: followercount} = useAppwrite(() => getFollowerCount(userid.userid));
+const {data: followingcount} = useAppwrite(() => getFollowingCount(userid.userid));
+const {data: username} = useAppwrite(() => getUsernameById(userid.userid));
+
+//console.log(userid)
 
 type ItemProps = {title: string, scores: string, caption: string};
 
@@ -32,32 +38,57 @@ const Item = ({title, scores, caption}: ItemProps) => (
   }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <Image style={styles.avatar} source={{uri: username.avatar}} />
-        <ThemedText type="title">{username.username}</ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title"> Posts:</ThemedText>
-      </ThemedView>
-      <FlatList
-        data={posts}
-        renderItem={({item}) => <Item title={item.course} scores={item.scores} caption={item.caption}/>}
-        keyExtractor={item => item.id}>
-      </FlatList>
-      { posts.length === 0 ? <ThemedText type="title"> No posts</ThemedText> : null }
-        
-      <TouchableOpacity style={styles.button} onPress={() => {onClick();}}>
-        <ThemedText style={styles.buttonText} type="title">Follow</ThemedText>
-      </TouchableOpacity>
-    </ParallaxScrollView>
+    <SafeAreaView className="bg-white h-full w-full">
+      <View className='flex flex-row justify-center pt-3 pb-4 border-b-[5px] border-stone-400'>
+        <TouchableOpacity>
+          <Ionicons size={28} name='search'></Ionicons>
+        </TouchableOpacity>
+        <Text className='text-3xl px-[108]'>Account</Text>
+        <TouchableOpacity>
+          <Ionicons size={28} name='settings-outline'></Ionicons>
+        </TouchableOpacity>
+      </View>
+      <ScrollView>
+        <Image className="w-full h-[300px] -top-24" resizeMode="contain" source={require('@/assets/images/background.jpg')}/>
+        <View className='bg-white -top-48'>
+          <View className='flex flex-row'>
+            <Image className='w-[115px] h-[115px] border border-black border-[5px] rounded-full ml-6 -top-6' resizeMode="contain" source={require('@/assets/images/background.jpg')} />
+            <View className='flex flex-col'>
+              <View className='flex flex-row m-3 w-64 h-12'>
+                <TouchableOpacity className='flex flex-col w-1/3'>
+                  <Text className='text-3xl self-center'>{postcount}</Text>
+                  <Text className='text-sm self-center'>Posts</Text>
+                </TouchableOpacity>
+                <TouchableOpacity className='flex flex-col w-1/3'>
+                  <Text className='text-3xl self-center'>{followercount}</Text>
+                  <Text className='text-sm self-center'>Followers</Text>
+                </TouchableOpacity>
+                <TouchableOpacity className='flex flex-col w-1/3'>
+                  <Text className='text-3xl self-center'>{followingcount}</Text>
+                  <Text className='text-sm self-center'>Following</Text>
+                </TouchableOpacity>
+              </View>
+              <View className='flex flex-row self-center w-60'>
+                <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg mr-2' onPress={() => {router.push('/(profile)/editprofile')}}>
+                    <Text className='self-center py-2 font-medium'>Edit profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg'>
+                    <Text className='self-center py-2 font-medium'>Share profile</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <Text className='text-4xl ml-8 mb-6'>{username}</Text>
+          <View className='border-b-[5px] border-stone-200'></View>
+          <FlatList
+            data={posts}
+            renderItem={({item}) => <Post prop={item}/>}
+            keyExtractor={item => item.postid}
+            scrollEnabled={false}>
+          </FlatList>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
