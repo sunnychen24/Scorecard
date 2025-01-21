@@ -31,7 +31,7 @@ export default function TabTwoScreen() {
   };
 
   const Item = ({user}: ItemProps) => (
-    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: user})}}>
+    <TouchableOpacity style={styles.item} onPress={() => {router.push({pathname: '/(follows)/viewprofile' , params: {userid: user.accountid}})}}>
       <Image
         style={styles.tinyLogo}
         source={{
