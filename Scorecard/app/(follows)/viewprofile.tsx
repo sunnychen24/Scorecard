@@ -7,21 +7,26 @@ import { ThemedView } from '@/components/ThemedView';
 import { Account } from 'react-native-appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import {router} from 'expo-router';
-import { follow, getFollowerCount, getFollowingCount, getIdByUsername, getPostCount, getUsernameById, getUsersPosts, signOut } from '@/lib/appwrite';
+import { follow, getAvatar, getFollowerCount, getFollowingCount, getIdByUsername, getPostCount, getUsernameById, getUsersPosts, signOut, isFollowing, unfollow } from '@/lib/appwrite';
 import { useLocalSearchParams } from "expo-router";
 import useAppwrite from '@/lib/useAppwrite';
 import { Ionicons } from '@expo/vector-icons';
 import { Post } from '@/components/Post';
+import { useState } from 'react';
 
 export default function ViewProfile() {
 const userid = useLocalSearchParams();
+
+
 const { data: posts, refetch } = useAppwrite(() => getUsersPosts(userid.userid));
 const {data: postcount} = useAppwrite(() => getPostCount(userid.userid));
 const {data: followercount} = useAppwrite(() => getFollowerCount(userid.userid));
 const {data: followingcount} = useAppwrite(() => getFollowingCount(userid.userid));
 const {data: username} = useAppwrite(() => getUsernameById(userid.userid));
-
-//console.log(userid)
+const {data: avatar} = useAppwrite(() => getAvatar(userid.userid));
+const {data: fol} = useAppwrite(() => isFollowing(userid.userid));
+const [follows, setFollows] = useState(fol);
+console.log(follows, fol)
 
 type ItemProps = {title: string, scores: string, caption: string};
 
@@ -33,26 +38,32 @@ const Item = ({title, scores, caption}: ItemProps) => (
   </View>
 );
 
-  const onClick = async () => {
+  const followClick = async () => {
+    setFollows(true);
     await follow(username);
+  }
+
+  const unfollowClick = async () => {
+    setFollows(false);
+    await unfollow(username);
   }
 
   return (
     <SafeAreaView className="bg-white h-full w-full">
       <View className='flex flex-row justify-center pt-3 pb-4 border-b-[5px] border-stone-400'>
-        <TouchableOpacity>
-          <Ionicons size={28} name='search'></Ionicons>
+        <TouchableOpacity onPress={() => {router.back()}}>
+          <Ionicons size={28} name='chevron-back'></Ionicons>
         </TouchableOpacity>
-        <Text className='text-3xl px-[108]'>Account</Text>
+        <Text className='text-3xl px-[108]'>{username}</Text>
         <TouchableOpacity>
-          <Ionicons size={28} name='settings-outline'></Ionicons>
+          <Ionicons size={28} name='ellipsis-horizontal-circle-outline'></Ionicons>
         </TouchableOpacity>
       </View>
       <ScrollView>
         <Image className="w-full h-[300px] -top-24" resizeMode="contain" source={require('@/assets/images/background.jpg')}/>
         <View className='bg-white -top-48'>
           <View className='flex flex-row'>
-            <Image className='w-[115px] h-[115px] border border-black border-[5px] rounded-full ml-6 -top-6' resizeMode="contain" source={require('@/assets/images/background.jpg')} />
+            <Image className='w-[115px] h-[115px] border border-black border-[5px] rounded-full ml-6 -top-6' resizeMode="contain" source={{uri: avatar}} />
             <View className='flex flex-col'>
               <View className='flex flex-row m-3 w-64 h-12'>
                 <TouchableOpacity className='flex flex-col w-1/3'>
@@ -69,11 +80,17 @@ const Item = ({title, scores, caption}: ItemProps) => (
                 </TouchableOpacity>
               </View>
               <View className='flex flex-row self-center w-60'>
-                <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg mr-2' onPress={() => {router.push('/(profile)/editprofile')}}>
-                    <Text className='self-center py-2 font-medium'>Edit profile</Text>
+                {fol ? 
+                <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg mr-2' onPress={() => {unfollowClick()}}>
+                    <Text className='self-center py-2 font-medium'>Following</Text>
                 </TouchableOpacity>
+                : 
+                <TouchableOpacity className='bg-primary w-1/2 rounded-lg mr-2' onPress={() => {followClick()}}>
+                    <Text className='self-center py-2 font-medium text-white'>Follow</Text>
+                </TouchableOpacity>
+                }
                 <TouchableOpacity className='bg-slate-200 w-1/2 rounded-lg'>
-                    <Text className='self-center py-2 font-medium'>Share profile</Text>
+                    <Text className='self-center py-2 font-medium'>Message</Text>
                 </TouchableOpacity>
               </View>
             </View>

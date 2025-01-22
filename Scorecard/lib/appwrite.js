@@ -123,17 +123,50 @@ export const getUsernameById = async (userid) => {
 }
 
 export const follow = async (user) => {
-try {
-    const userid = await getIdByUsername(user);
-    const currentUser = await getCurrentUser();
-    if (!currentUser) throw Error;
+    try {
+        const userid = await getIdByUsername(user);
+        const currentUser = await getCurrentUser();
+        if (!currentUser) throw Error;
 
-    const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), 
-        {follower: currentUser.accountid, following: userid});
-    return fol
-} catch (error) {
-    throw new Error(error)
+        const fol = await databases.createDocument(config.databaseID, config.followsCollectionID, ID.unique(), 
+            {follower: currentUser.accountid, following: userid});
+        return fol
+    } catch (error) {
+        throw new Error(error)
+    }
 }
+
+export const unfollow = async (user) => {
+    try {
+        const userid = await getIdByUsername(user);
+        const currentUser = await getCurrentUser();
+        if (!currentUser) throw Error;
+
+        const documentID = await databases.listDocuments(config.databaseID, config.followsCollectionID,
+            [Query.equal('follower', currentUser.accountid), Query.equal('following', userid)]);
+        
+        console.log(documentID)
+
+        const del = await databases.deleteDocument(config.databaseID, config.followsCollectionID, documentID.documents[0].$id)
+        return del
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const isFollowing = async (userid) => {
+    try {
+        const currentUser = await getCurrentUser();
+        if (!currentUser) throw Error;
+
+        const followcheck = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
+            [Query.equal('follower', currentUser.accountid), Query.equal('following', userid)])
+        //console.log(userCheck);
+        if (followcheck.total == 0) return false;
+        return true;
+    } catch (error) {
+        throw new Error(error)
+    }
 }
 
 export const usernameExists = async (user) => {
@@ -240,8 +273,10 @@ export const getUsersPosts = async (userid) => {
         for (var i=0; i<posts.documents.length; i++){
             const username = await getUsernameById(posts.documents[i].creator)
             posts.documents[i].username = username
-            posts.documents[i].avatar = await getAvatar(username)
+            posts.documents[i].avatar = await getAvatar(posts.documents[i].creator)
         }
+
+        posts.documents.reverse();
         //console.log(posts)
         //console.log(posts.total)
         return posts.documents;
@@ -292,10 +327,10 @@ export const getHomePosts = async (userid) => {
     }
 }
 
-export const getAvatar = async (username) => {
+export const getAvatar = async (userid) => {
     try {
         const user = await databases.listDocuments(config.databaseID, config.userCollectionID, 
-            [Query.equal('username', username)])
+            [Query.equal('accountid', userid)])
         if (!user) throw Error;
         //console.log(user.documents[0])
         return user.documents[0].avatar;
