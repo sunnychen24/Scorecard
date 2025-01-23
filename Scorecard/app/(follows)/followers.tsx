@@ -4,16 +4,16 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import useAppwrite from '@/lib/useAppwrite';
 import { getAvatar, getFollowers } from '@/lib/appwrite';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { Models } from 'react-native-appwrite';
 
 export default function HomeScreen() {
-  const {user} = useGlobalContext();
-  const { data: users, refetch } = useAppwrite(() => getFollowers(user.accountid));
-  console.log(users)
+  const userid = useLocalSearchParams();
+  const { data: users, refetch } = useAppwrite(() => getFollowers(userid.userid));
+  console.log(userid)
 
   type ItemProps = {
     user: Models.Document;

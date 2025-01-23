@@ -6,13 +6,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import useAppwrite from '@/lib/useAppwrite';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { getFollowings } from '@/lib/appwrite';
 import { Models } from 'react-native-appwrite';
 
 export default function HomeScreen() {
-  const {user} = useGlobalContext();
-  const { data: users, refetch } = useAppwrite(() => getFollowings(user.accountid));
+  const userid = useLocalSearchParams();
+  const { data: users, refetch } = useAppwrite(() => getFollowings(userid.userid));
   console.log(users)
   
   type ItemProps = {

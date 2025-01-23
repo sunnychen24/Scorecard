@@ -30,7 +30,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView className="bg-white h-full w-full">
       <View className='flex flex-row justify-center pt-3 pb-4 border-b-[5px] border-stone-400'>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => {router.push('/(profile)/explore')}}>
           <Ionicons size={28} name='search'></Ionicons>
         </TouchableOpacity>
         <Text className='text-3xl px-[108]'>Account</Text>
@@ -49,11 +49,11 @@ export default function ProfileScreen() {
                   <Text className='text-3xl self-center'>{postcount}</Text>
                   <Text className='text-sm self-center'>Posts</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className='flex flex-col w-1/3'>
+                <TouchableOpacity className='flex flex-col w-1/3' onPress={() => {router.push({pathname: '/(follows)/followers' , params: {userid: user.accountid}})}}>
                   <Text className='text-3xl self-center'>{followercount}</Text>
                   <Text className='text-sm self-center'>Followers</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className='flex flex-col w-1/3'>
+                <TouchableOpacity className='flex flex-col w-1/3' onPress={() => {router.push({pathname: '/(follows)/following' , params: {userid: user.accountid}})}}>
                   <Text className='text-3xl self-center'>{followingcount}</Text>
                   <Text className='text-sm self-center'>Following</Text>
                 </TouchableOpacity>
