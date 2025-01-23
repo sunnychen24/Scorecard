@@ -39,7 +39,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView className="bg-white h-full w-full">
       <View className='flex flex-row justify-center pt-3 pb-4 border-b-[5px] border-stone-400'>
-        <TouchableOpacity className='pr-[94]'>
+        <TouchableOpacity className='pr-[94]' onPress={() => {router.push('/(profile)/explore')}}>
           <Ionicons size={28} name='search'></Ionicons>
         </TouchableOpacity>
         <Text className='text-3xl pl-7'>Home</Text>

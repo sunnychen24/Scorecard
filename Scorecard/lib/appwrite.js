@@ -214,7 +214,7 @@ export const getFollowerCount = async (userid) => {
 
 export const getFollowings = async (userid) => {
     try {
-        //console.log(user);
+        console.log(userid);
         const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
             [Query.equal('follower', userid)]);
 
