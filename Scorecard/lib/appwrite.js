@@ -1,5 +1,6 @@
 import SignIn from '@/app/(auth)/signin';
 import {Account, Client, Databases, ID, Avatars, Query, Storage } from 'react-native-appwrite';
+import mergeLists from './mergeLists';
 
 export const config = {
     endpoint: 'https://cloud.appwrite.io/v1',
@@ -304,23 +305,15 @@ export const getHomePosts = async (userid) => {
         const followings = await databases.listDocuments(config.databaseID, config.followsCollectionID, 
             [Query.equal('follower', userid)]);
 
-        const posts = await getUsersPosts(userid);
+        let posts = await getUsersPosts(userid);
+        console.log(posts)
 
         //add all followings posts
         for (var i=0; i<followings.documents.length; i++){
             const userposts = await getUsersPosts(followings.documents[i].following)
-            for (var a=0; a<userposts.length; a++){
-                posts.push(userposts[a])
-            }
+            posts = mergeLists(posts, userposts);
+            console.log(posts)
         }
-        posts.sort(function(a, b){
-            let x = a.$updatedAt;
-            let y = b.$updatedAt;
-            if (x < y) {return -1;}
-            if (x > y) {return 1;}
-            return 0;});
-        posts.reverse();
-        //console.log(posts)
         return posts;
     } catch (error) {
         throw new Error(error);

@@ -50,9 +50,6 @@ export default function HomeScreen() {
           <Ionicons size={28} name='chatbubble-outline'></Ionicons>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => {router.push('/(posts)/newpost')}}>
-        <ThemedText style={styles.buttonText} type="title">New Post</ThemedText>
-      </TouchableOpacity>
       <ScrollView>
         <FlatList
             data={posts}

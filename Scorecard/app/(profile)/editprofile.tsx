@@ -16,23 +16,17 @@ import { uploadFile1 } from '@/lib/test'
 export default function editprofile() {
     const {user, setUser, setIsLoggedIn} = useGlobalContext();
     const [uploading, setUploading] = useState(false);
-    const [form, setForm] = useState({
-      thumbnail: null,
-    });
+    const [form, setForm] = useState(null);
 
     const openPicker = async (selectType: string) => {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
         allowsEditing: true,
-        quality: 1,
+        aspect: [1,1],
       });
       
       if (!result.canceled) {
         if (selectType === "image") {
-          setForm({
-            ...form,
-            thumbnail: result.assets[0],
-          });
+          setForm(result);
         }
       } else {
         setTimeout(() => {
@@ -42,25 +36,22 @@ export default function editprofile() {
     };
     
     const onClick = async () => { 
-      if (!form.thumbnail) {
+      if (!form) {
       return console.log("Please provide all fields");
     }
       try {
         
         //console.log(form)
-        if (form.thumbnail){
+        if (form){
           setUploading(true);
-          //await createVideoPost({...form,userId: user?.userid,});
-          await uploadFile1();
+          await uploadFile1(form.assets[0]);
           
           router.push('/(tabs)/profile');
         }
       } catch (error) {
         if (error instanceof Error) console.log("Error", error.message);
       } finally {
-        setForm({
-          thumbnail: null,
-        });
+        setForm(null);
   
         setUploading(false);
       }
@@ -76,7 +67,7 @@ export default function editprofile() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        { form.thumbnail!==null ? <Image style={styles.avatar} source={{uri: form.thumbnail.uri}} /> : <Image style={styles.avatar} source={{uri: user?.avatar}} /> }
+        { form!==null ? <Image style={styles.avatar} source={{uri: form.assets[0].uri}} /> : <Image style={styles.avatar} source={{uri: user?.avatar}} /> }
         
         <ThemedText type="title">{user?.username}</ThemedText>
         </ThemedView>
